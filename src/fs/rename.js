@@ -21,7 +21,7 @@ const rename = async () => {
     throw new Error('FS operation failed')
   }
 
-  fsPromises.rename(
+  await fsPromises.rename(
     pathInitialFile,
     pathRenameFile
   )
