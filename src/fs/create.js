@@ -1,17 +1,15 @@
-import fs from "fs";
+import fs from "node:fs/promises";
 import path from "path";
 
 const create = async () => {
   const __dirname = path.resolve();
   const pathFile = path.join(__dirname, "/src/fs/files", "fresh.txt");
 
-  if (fs.existsSync(pathFile)) {
+  try {
+    await fs.writeFile(pathFile, "I am fresh and young", { flag: "wx" });
+  } catch (err) {
     throw new Error("FS operation failed");
   }
-  fs.appendFile(pathFile, "I am fresh and young", function (err) {
-    if (err) throw err;
-    console.log("Saved!");
-  });
 };
 
 await create();
