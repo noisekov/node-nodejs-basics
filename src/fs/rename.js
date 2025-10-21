@@ -1,30 +1,28 @@
-import fsPromises from 'fs/promises'
-import path from 'path';
+import { rename, access } from "fs/promises";
+import path from "path";
 
 const __dirname = path.resolve();
-const pathFile = (fileName) => path.join(__dirname, `/src/fs/files/${fileName}`);
+const pathFile = (fileName) =>
+  path.join(__dirname, `/src/fs/files/${fileName}`);
 
-async function exists (path) {  
+async function exists(path) {
   try {
-    await fsPromises.access(path)
-    return true
+    await access(path);
+    return true;
   } catch {
-    return false
+    return false;
   }
 }
 
-const rename = async () => {
-  const pathInitialFile = pathFile('wrongFilename.txt');
-  const pathRenameFile = pathFile('properFilename.md');
+const renameFile = async () => {
+  const pathInitialFile = pathFile("wrongFilename.txt");
+  const pathRenameFile = pathFile("properFilename.md");
 
-  if (!await exists(pathInitialFile) || await exists(pathRenameFile)) {
-    throw new Error('FS operation failed')
+  if (!(await exists(pathInitialFile)) || (await exists(pathRenameFile))) {
+    throw new Error("FS operation failed");
   }
 
-  await fsPromises.rename(
-    pathInitialFile,
-    pathRenameFile
-  )
+  await rename(pathInitialFile, pathRenameFile);
 };
 
-await rename();
+await renameFile();
