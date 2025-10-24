@@ -1,4 +1,4 @@
-import fs from "node:fs/promises";
+import { createWriteStream } from "node:fs";
 import path from "path";
 
 const write = async () => {
@@ -10,13 +10,8 @@ const write = async () => {
     "fileToWrite.txt"
   );
 
-  process.stdin.on("readable", async () => {
-    let chunk;
-
-    while ((chunk = process.stdin.read()) !== null) {
-      await fs.writeFile(pathFile, chunk, { flag: "a+" });
-    }
-  });
+  const writableStream = createWriteStream(pathFile);
+  process.stdin.pipe(writableStream);
 };
 
 await write();
