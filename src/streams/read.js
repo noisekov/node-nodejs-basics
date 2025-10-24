@@ -1,6 +1,5 @@
 import { createReadStream } from "node:fs";
 import path from "path";
-import { stdin, stdout } from "node:process";
 
 const read = async () => {
   const __dirname = path.resolve();
