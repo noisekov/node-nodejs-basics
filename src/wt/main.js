@@ -1,26 +1,34 @@
 import { Worker } from "worker_threads";
 import path from "path";
+import os from "os";
 
 const performCalculations = async () => {
-  const CPU_CORES = 6;
+  const CPU_CORES = os.cpus().length;
   const __dirname = path.resolve();
   const pathFile = path.join(__dirname, "/src/wt", "worker.js");
-  const resultsArr = [];
+  const workersResults = [];
   let startFibonacciNumber = 10;
+  const mistakenResult = { status: "error", data: null };
 
   for (let core = 1; core <= CPU_CORES; core++) {
     const workerCPU = new Worker(pathFile, {
       workerData: startFibonacciNumber,
     });
 
-    resultsArr.push(
+    workersResults.push(
       new Promise((resolve) => {
-        workerCPU.on("message", async (message) => {
+        workerCPU.on("message", (message) => {
           resolve({ status: "resolved", data: message });
         });
 
-        workerCPU.on("error", async (message) => {
-          resolve({ status: "error", data: null });
+        workerCPU.on("error", (message) => {
+          resolve(mistakenResult);
+        });
+
+        workerCPU.on("exit", (code) => {
+          if (code !== 0) {
+            resolve(mistakenResult);
+          }
         });
       })
     );
@@ -28,7 +36,7 @@ const performCalculations = async () => {
     startFibonacciNumber++;
   }
 
-  const result = await Promise.all(resultsArr);
+  const result = await Promise.all(workersResults);
   console.log(result);
 
   return result;
