@@ -17,11 +17,11 @@ const performCalculations = async () => {
 
     workersResults.push(
       new Promise((resolve) => {
-        workerCPU.on("message", (message) => {
-          resolve({ status: "resolved", data: message });
+        workerCPU.on("message", (data) => {
+          resolve({ status: "resolved", data });
         });
 
-        workerCPU.on("error", (message) => {
+        workerCPU.on("error", () => {
           resolve(mistakenResult);
         });
 
